@@ -62,7 +62,48 @@ function createTable(data) {
     });
 }
 
+function cleanInputs() {
+    heightInput.value = "";
+    weightInput.value = "";
+}
+
+function validDigits(text) {
+    return text.replace(/[^0-9,]/g, "");
+}
+
+function calcImc(weight, height) {
+    const imc = (weight / (height * height)).toFixed(1);
+    return imc;
+}
+
 // Inicialização
 createTable(data);
 
 // Eventos
+[heightInput, weightInput].forEach((el) => {
+    el.addEventListener("input", (e) => {
+        const updatedValue = validDigits(e.target.value);
+        e.target.value = updatedValue;
+    });
+});
+
+calcBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    const weight = +weightInput.value.replace(",", ".");
+    const height = +heightInput.value.replace(",", ".");
+    if (!weight || !height) return;
+    const imc = calcImc(weight, height);
+    let info;
+    data.forEach((item) => {
+        if (imc >= item.min && imc <= item.max) {
+            info = item.info;
+        }
+    });
+    console.log(info);
+    if (!info) return;
+});
+
+clearBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    cleanInputs();
+});
